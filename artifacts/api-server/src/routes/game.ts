@@ -58,14 +58,23 @@ router.post("/player", async (req, res) => {
     .from(pokemonSpeciesTable)
     .where(eq(pokemonSpeciesTable.id, body.starterPokemonSpeciesId));
 
-  if (starterSpecies) {
-    function calcHp(base: number, lvl: number) {
-      return Math.floor((2 * base * lvl) / 100) + lvl + 10;
-    }
-    function calcStat(base: number, lvl: number) {
-      return Math.floor((2 * base * lvl) / 100) + lvl + 5;
-    }
+  if (!starterSpecies) {
+    console.error(`Starter species not found for ID: ${body.starterPokemonSpeciesId}`);
+    res.status(400).json({ error: "Invalid starter Pokémon selected" });
+    return;
+  }
+
+  function calcHp(base: number, lvl: number) {
+    return Math.floor((2 * base * lvl) / 100) + lvl + 10;
+  }
+  function calcStat(base: number, lvl: number) {
+    return Math.floor((2 * base * lvl) / 100) + lvl + 5;
+  }
+
+  try {
     const lvl = 5;
+    const moves = Array.isArray(starterSpecies.moveIds) ? starterSpecies.moveIds.slice(0, 4) : [];
+    
     await db.insert(playerPokemonsTable).values({
       playerId: player.id,
       speciesId: starterSpecies.id,
@@ -79,13 +88,16 @@ router.post("/player", async (req, res) => {
       specialAttack: calcStat(starterSpecies.baseSpecialAttack, lvl),
       specialDefense: calcStat(starterSpecies.baseSpecialDefense, lvl),
       speed: calcStat(starterSpecies.baseSpeed, lvl),
-      moveIds: starterSpecies.moveIds.slice(0, 4),
+      moveIds: moves,
       isInParty: true,
       partySlot: 0,
     });
-  }
 
-  res.status(201).json(formatPlayer(player));
+    res.status(201).json(formatPlayer(player));
+  } catch (error) {
+    console.error("Failed to create starter Pokemon:", error);
+    res.status(500).json({ error: "Failed to initialize your adventure. Please try again." });
+  }
 });
 
 router.patch("/player/progress", async (req, res) => {

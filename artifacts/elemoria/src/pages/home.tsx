@@ -53,7 +53,7 @@ export default function Home() {
       id: 3,
       name: "Chikorita",
       description: "A curious nature creature from ancient forests.",
-      type1: "Nature",
+      type1: "Grass",
       type2: null,
       baseHp: 45, baseAttack: 49, baseDefense: 49, baseSpeed: 45,
       baseSpecialAttack: 65, baseSpecialDefense: 65,
@@ -93,6 +93,11 @@ export default function Home() {
           await queryClient.invalidateQueries({ queryKey: getGetPlayerQueryKey() });
           setLocation("/hub");
         },
+        onError: (error: any) => {
+          console.error("Creation failed:", error);
+          const message = error?.response?.data?.error || "Failed to start adventure. Please check your connection and try again.";
+          alert(message);
+        }
       }
     );
   };
@@ -240,7 +245,7 @@ function getTypeColor(type: string): string {
   const colors: Record<string, string> = {
     Fire: "#f97316",
     Water: "#3b82f6",
-    Nature: "#22c55e",
+    Grass: "#22c55e",
     Earth: "#a16207",
     Air: "#38bdf8",
     Lightning: "#eab308",

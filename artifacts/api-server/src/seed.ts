@@ -4,7 +4,7 @@ import {
   pokemonSpeciesTable,
   regionsTable,
 } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 const MOVES = [
   // Fire moves
@@ -360,10 +360,10 @@ const REGIONS = [
 export async function seed() {
   console.log("Starting seed...");
 
-  // Check if already seeded
-  const existingMoves = await db.select().from(movesTable).limit(1);
-  if (existingMoves.length > 0) {
-    console.log("Already seeded, skipping.");
+  // Check if starters exist
+  const starters = await db.select().from(pokemonSpeciesTable).where(inArray(pokemonSpeciesTable.name, ["Charmander", "Squirtle", "Chikorita"]));
+  if (starters.length === 3) {
+    console.log("Starters already exist, skipping main seed.");
     return;
   }
 

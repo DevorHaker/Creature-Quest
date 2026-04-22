@@ -21,14 +21,14 @@ const router: Router = Router();
 
 // Type chart for damage multipliers
 const TYPE_CHART: Record<string, Record<string, number>> = {
-  Fire: { Nature: 2, Crystal: 2, Air: 0.5, Water: 0.5, Earth: 0.5 },
-  Water: { Fire: 2, Earth: 2, Air: 0.5, Nature: 0.5 },
-  Nature: { Water: 2, Earth: 2, Fire: 0.5, Air: 0.5 },
-  Earth: { Fire: 2, Lightning: 2, Water: 0.5, Nature: 0.5 },
+  Fire: { Grass: 2, Crystal: 2, Air: 0.5, Water: 0.5, Earth: 0.5 },
+  Water: { Fire: 2, Earth: 2, Air: 0.5, Grass: 0.5 },
+  Grass: { Water: 2, Earth: 2, Fire: 0.5, Air: 0.5 },
+  Earth: { Fire: 2, Lightning: 2, Water: 0.5, Grass: 0.5 },
   Air: { Earth: 2, Lightning: 2, Fire: 0.5 },
   Lightning: { Water: 2, Air: 2, Earth: 0.5 },
-  Shadow: { Arcane: 2, Crystal: 2, Nature: 0.5 },
-  Crystal: { Shadow: 2, Nature: 2, Fire: 0.5 },
+  Shadow: { Arcane: 2, Crystal: 2, Grass: 0.5 },
+  Crystal: { Shadow: 2, Grass: 2, Fire: 0.5 },
   Arcane: { Shadow: 2, Lightning: 2 },
   Void: { Arcane: 2, Fire: 2, Crystal: 0.5 },
 };
