@@ -4,15 +4,16 @@ import { useLocation } from "wouter";
 import { useGameStore } from "@/hooks/use-game-store";
 
 export default function World() {
-  const { data: regions } = useListRegions();
+  const { data: regionsResponse } = useListRegions();
+  const regions = regionsResponse?.data;
   const startBattle = useStartBattle();
   const [, setLocation] = useLocation();
   const setActiveBattleId = useGameStore(s => s.setActiveBattleId);
 
   const onExplore = (regionId: number) => {
     startBattle.mutate({ data: { battleType: "wild", regionId } }, {
-      onSuccess: (battle) => {
-        setActiveBattleId(battle.id);
+      onSuccess: (resp) => {
+        setActiveBattleId(resp.data.id);
         setLocation("/battle");
       },
       onError: (error: any) => {

@@ -1,5 +1,5 @@
 import { db } from "@workspace/db";
-import { movesTable, PokemonpeciesTable, regionsTable } from "@workspace/db";
+import { movesTable, pokemonSpeciesTable, regionsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
 const NEW_MOVES = [
@@ -118,7 +118,7 @@ const NEW_SPECIES = [
   {
     name: "Abomasnow",
     description: "A thorny behemoth clad in impenetrable purple jewels. Evolved from Snover.",
-    type1: "Grass", type2: "Ice",
+    type1: "Dark", type2: null,
     baseHp: 85, baseAttack: 75, baseDefense: 105, baseSpeed: 55, baseSpecialAttack: 85, baseSpecialDefense: 90,
     evolutionLevel: null, catchRate: 20, rarity: "rare",
     spriteUrl: "/api/sprites/abomasnow", backSpriteUrl: "/api/sprites/abomasnow-back",
@@ -330,7 +330,7 @@ export async function expand() {
 
   // Insert any currently missing moves
   const existingMoves = await db.select().from(movesTable);
-  const existingMoveNames = new Set(existingMoves.map((m) => m.name));
+  const existingMoveNames = new Set(existingMoves.map((m: any) => m.name));
   
   const movesToInsert = NEW_MOVES.filter((m) => !existingMoveNames.has(m.name));
   if (movesToInsert.length > 0) {
@@ -342,11 +342,11 @@ export async function expand() {
 
   // Refetch all moves to get maps
   const allMoves = await db.select().from(movesTable);
-  const moveMap = new Map(allMoves.map((m) => [m.name, m.id]));
+  const moveMap = new Map(allMoves.map((m: any) => [m.name, m.id]));
 
   // Insert any currently missing species
-  const existingSpecies = await db.select().from(PokemonpeciesTable);
-  const existingSpeciesNames = new Set(existingSpecies.map((s) => s.name));
+  const existingSpecies = await db.select().from(pokemonSpeciesTable);
+  const existingSpeciesNames = new Set(existingSpecies.map((s: any) => s.name));
 
   const evolutionLinks: Array<{ name: string; evolvesFrom: string }> = [
     { name: "Vaporis", evolvesFrom: "Boilrox" },
@@ -389,14 +389,14 @@ export async function expand() {
       rarity: s.rarity,
     }));
 
-    await db.insert(PokemonpeciesTable).values(speciesInserts);
+    await db.insert(pokemonSpeciesTable).values(speciesInserts);
   } else {
     console.log("New species already exist.");
   }
 
   // Refetch all species for evolution links and region spawns
-  const allSpecies = await db.select().from(PokemonpeciesTable);
-  const speciesMap = new Map(allSpecies.map((s) => [s.name, s.id]));
+  const allSpecies = await db.select().from(pokemonSpeciesTable);
+  const speciesMap = new Map(allSpecies.map((s: any) => [s.name, s.id]));
 
   console.log("Updating evolution links...");
   for (const link of evolutionLinks) {
@@ -404,9 +404,9 @@ export async function expand() {
     const baseId = speciesMap.get(link.evolvesFrom);
     if (evolvedId && baseId) {
       await db
-        .update(PokemonpeciesTable)
+        .update(pokemonSpeciesTable)
         .set({ evolvesIntoId: evolvedId })
-        .where(eq(PokemonpeciesTable.id, baseId));
+        .where(eq(pokemonSpeciesTable.id, baseId));
     }
   }
 
@@ -429,14 +429,14 @@ export async function expand() {
         .map(name => speciesMap.get(name))
         .filter((id): id is number => id !== undefined);
 
-      const existingSets = new Set(region.wildPokemonpeciesIds || []);
+      const existingSets = new Set(region.wildPokemonSpeciesIds || []);
       for (const aid of additionalSpeciesIds) {
         existingSets.add(aid);
       }
       
       await db
         .update(regionsTable)
-        .set({ wildPokemonpeciesIds: Array.from(existingSets) })
+        .set({ wildPokemonSpeciesIds: Array.from(existingSets) })
         .where(eq(regionsTable.id, region.id));
     }
   }

@@ -1,4 +1,4 @@
-import { useGetPlayer, useGetPlayerPokemon, useHealParty } from "@workspace/api-client-react";
+import { useGetPlayer, useListPlayerPokemon, useHealParty } from "@workspace/api-client-react";
 import { useGameStore } from "@/hooks/use-game-store";
 import { useTypeColor } from "@/hooks/use-type-color";
 import { useLocation } from "wouter";
@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 
 export default function Hub() {
   const [, setLocation] = useLocation();
-  const { data: player } = useGetPlayer();
-  const { data: Pokemon, refetch: refetchPokemon } = useGetPlayerPokemon();
+  const { data: playerResponse } = useGetPlayer();
+  const player = playerResponse?.data;
+  const { data: PokemonResponse, refetch: refetchPokemon } = useListPlayerPokemon();
+  const Pokemon = PokemonResponse?.data;
   const healMutation = useHealParty();
 
   const handleHeal = () => {
@@ -92,8 +94,8 @@ export default function Hub() {
             <Button variant="outline" className="w-full justify-start gap-3" onClick={() => setLocation("/collection")}>
               <span>📖</span> My Collection
             </Button>
-            <Button variant="outline" className="w-full justify-start gap-3" onClick={() => setLocation("/Pokedex")}>
-              <span>🔬</span> Pokemon Dex
+            <Button variant="outline" className="w-full justify-start gap-3" onClick={() => setLocation("/pokedex")}>
+              <span>🔬</span> Pokedex
             </Button>
             <Button variant="outline" className="w-full justify-start gap-3" onClick={() => setLocation("/inventory")}>
               <span>🎒</span> Inventory

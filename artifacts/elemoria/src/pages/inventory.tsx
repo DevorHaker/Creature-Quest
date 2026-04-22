@@ -20,7 +20,8 @@ function getItemIcon(name: string) {
 }
 
 export default function Inventory() {
-  const { data, isLoading } = useGetInventory();
+  const { data: dataResponse, isLoading } = useGetInventory();
+  const data = dataResponse?.data;
   const items = data?.items ?? [];
 
   return (

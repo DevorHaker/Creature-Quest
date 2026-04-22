@@ -8,8 +8,10 @@ function nameToColor(name: string): string {
 }
 
 export default function Leaderboard() {
-  const { data: leaders, isLoading } = useGetLeaderboard();
-  const { data: summary } = useGetGameSummary();
+  const { data: leadersResponse, isLoading } = useGetLeaderboard();
+  const leaders = leadersResponse?.data;
+  const { data: summaryResponse } = useGetGameSummary();
+  const summary = summaryResponse?.data;
 
   const medals = ["🥇", "🥈", "🥉"];
 

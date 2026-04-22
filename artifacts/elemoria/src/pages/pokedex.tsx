@@ -4,7 +4,8 @@ import { PokemonSprite } from "@/components/pokemon-sprite";
 import { getTypeColor } from "@/lib/type-colors";
 
 export default function Pokedex() {
-  const { data: Pokemon, isLoading } = useListPokemon();
+  const { data: PokemonResponse, isLoading } = useListPokemon();
+  const Pokemon = PokemonResponse?.data;
   const [selected, setSelected] = useState<number | null>(null);
   const [filter, setFilter] = useState("");
 

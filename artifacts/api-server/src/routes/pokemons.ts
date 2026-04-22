@@ -253,11 +253,11 @@ router.post("/player/party", async (req, res) => {
     .where(eq(playerPokemonsTable.playerId, player.id));
 
   // Set new party members
-  for (let i = 0; i < body.pokemonIds.length; i++) {
+  for (let i = 0; i < body.PokemonIds.length; i++) {
     await db
       .update(playerPokemonsTable)
       .set({ isInParty: true, partySlot: i })
-      .where(eq(playerPokemonsTable.id, body.pokemonIds[i]));
+      .where(eq(playerPokemonsTable.id, body.PokemonIds[i]));
   }
 
   const allPlayerPokemon = await db

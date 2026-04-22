@@ -27,7 +27,7 @@ export interface Player {
 export interface CreatePlayerBody {
   name: string;
   avatarColor: string;
-  starterPokemonpeciesId: number;
+  starterPokemonSpeciesId: number;
 }
 
 export interface UpdatePlayerProgressBody {
@@ -61,7 +61,7 @@ export interface Move {
   effect?: string | null;
 }
 
-export interface Pokemonpecies {
+export interface PokemonSpecies {
   id: number;
   name: string;
   description: string;
@@ -100,7 +100,7 @@ export interface PlayerPokemon {
   isInParty: boolean;
   partySlot?: number | null;
   statusCondition?: string | null;
-  species: Pokemonpecies;
+  species: PokemonSpecies;
   capturedAt: string;
 }
 
@@ -155,12 +155,12 @@ export interface BattleState {
   currencyGained?: number | null;
 }
 
-export type StartBattleBodyBattleType =
-  (typeof StartBattleBodyBattleType)[keyof typeof StartBattleBodyBattleType];
+export type StartBattleBodyBattleType = typeof StartBattleBodyBattleType[keyof typeof StartBattleBodyBattleType];
+
 
 export const StartBattleBodyBattleType = {
-  wild: "wild",
-  trainer: "trainer",
+  wild: 'wild',
+  trainer: 'trainer',
 } as const;
 
 export interface StartBattleBody {
@@ -169,15 +169,15 @@ export interface StartBattleBody {
   trainerLevel?: number;
 }
 
-export type BattleActionBodyAction =
-  (typeof BattleActionBodyAction)[keyof typeof BattleActionBodyAction];
+export type BattleActionBodyAction = typeof BattleActionBodyAction[keyof typeof BattleActionBodyAction];
+
 
 export const BattleActionBodyAction = {
-  attack: "attack",
-  item: "item",
-  flee: "flee",
-  capture: "capture",
-  switch: "switch",
+  attack: 'attack',
+  item: 'item',
+  flee: 'flee',
+  capture: 'capture',
+  switch: 'switch',
 } as const;
 
 export interface BattleActionBody {
@@ -211,7 +211,7 @@ export interface Region {
 
 export interface WildPokemonEncounter {
   speciesId: number;
-  species: Pokemonpecies;
+  species: PokemonSpecies;
   minLevel: number;
   maxLevel: number;
   encounterRate: number;
@@ -251,3 +251,4 @@ export interface LeaderboardEntry {
 export type HealParty200 = {
   success: boolean;
 };
+

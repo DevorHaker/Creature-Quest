@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { regionsTable, PokemonpeciesTable, movesTable } from "@workspace/db";
+import { regionsTable, pokemonSpeciesTable, movesTable } from "@workspace/db";
 import { eq, inArray } from "drizzle-orm";
 import { GetRegionWildPokemonParams } from "@workspace/api-zod";
 
@@ -47,7 +47,7 @@ router.get("/world/regions/:id/wild-Pokemon", async (req, res) => {
     return;
   }
 
-  const speciesIds = region.wildPokemonpeciesIds;
+  const speciesIds = region.wildPokemonSpeciesIds;
   if (speciesIds.length === 0) {
     res.json([]);
     return;
@@ -55,8 +55,8 @@ router.get("/world/regions/:id/wild-Pokemon", async (req, res) => {
 
   const speciesList = await db
     .select()
-    .from(PokemonpeciesTable)
-    .where(inArray(PokemonpeciesTable.id, speciesIds));
+    .from(pokemonSpeciesTable)
+    .where(inArray(pokemonSpeciesTable.id, speciesIds));
 
   const result = await Promise.all(
     speciesList.map(async (species) => {

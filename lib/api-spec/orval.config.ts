@@ -27,17 +27,17 @@ export default defineConfig({
       client: "react-query",
       mode: "split",
       baseUrl: "/api",
-      clean: true,
-      prettier: true,
-      override: {
+      clean: false,
+      prettier: false,
+      /* override: {
         fetch: {
           includeHttpResponseReturnType: false,
         },
         mutator: {
-          path: path.resolve(apiClientReactSrc, "custom-fetch.ts"),
+          path: "./custom-fetch.ts",
           name: "customFetch",
         },
-      },
+      }, */
     },
   },
   zod: {
@@ -51,10 +51,9 @@ export default defineConfig({
       workspace: apiZodSrc,
       client: "zod",
       target: "generated",
-      schemas: { path: "generated/types", type: "typescript" },
-      mode: "split",
+      mode: "single",
       clean: true,
-      prettier: true,
+      prettier: false,
       override: {
         zod: {
           coerce: {

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useGetPlayerPokemon, useSetPlayerParty } from "@workspace/api-client-react";
-import { Pokemonprite } from "@/components/Pokemon-sprite";
+import { useListPlayerPokemon, useSetPlayerParty } from "@workspace/api-client-react";
+import { PokemonSprite } from "@/components/pokemon-sprite";
 import { getTypeColor, getTypeBgClass } from "@/lib/type-colors";
 import { Button } from "@/components/ui/button";
 
 export default function Collection() {
-  const { data: Pokemon, isLoading, refetch } = useGetPlayerPokemon();
+  const { data: PokemonResponse, isLoading, refetch } = useListPlayerPokemon();
+  const Pokemon = PokemonResponse?.data;
   const setPartyMutation = useSetPlayerParty();
   const [selected, setSelected] = useState<number | null>(null);
   const [tab, setTab] = useState<"all" | "party">("all");
@@ -89,7 +90,7 @@ export default function Collection() {
                   <div className="text-xs text-primary font-semibold mb-1">● Party</div>
                 )}
                 <div className="w-20 h-20 mx-auto mb-3">
-                  <Pokemonprite
+                  <PokemonSprite
                     speciesName={a.species?.name ?? "Pokemon"}
                     type={type1}
                     spriteUrl={a.species?.spriteUrl ?? ""}
@@ -131,7 +132,7 @@ export default function Collection() {
           <div className="w-72 flex-shrink-0">
             <div className="bg-card border border-card-border rounded-2xl p-6 sticky top-4 space-y-4">
               <div className="w-28 h-28 mx-auto">
-                <Pokemonprite
+                <PokemonSprite
                   speciesName={selectedPokemon.species?.name ?? "Pokemon"}
                   type={selectedPokemon.species?.type1 ?? ""}
                   spriteUrl={selectedPokemon.species?.spriteUrl ?? ""}

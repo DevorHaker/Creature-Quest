@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import healthRouter from "./health";
 import gameRouter from "./game";
-import PokemonRouter from "./Pokemon";
+import PokemonRouter from "./pokemons";
 import battleRouter from "./battle";
 import worldRouter from "./world";
 import inventoryRouter from "./inventory";

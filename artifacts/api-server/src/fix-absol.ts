@@ -1,14 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { db } from "@workspace/db";
-import { PokemonpeciesTable, movesTable } from "@workspace/db";
+import { pokemonSpeciesTable, movesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
 async function run() {
   console.log("Starting Absol DB fix...");
 
   // Update DB: Snover -> Absol, type: Dark
-  await db.update(PokemonpeciesTable)
+  await db.update(pokemonSpeciesTable)
     .set({ 
       name: "Absol", 
       type1: "Dark", 
@@ -17,9 +17,9 @@ async function run() {
       backSpriteUrl: "/api/sprites/absol-back",
       evolvesIntoId: null // remove evolution line to Abomasnow
     })
-    .where(eq(PokemonpeciesTable.name, "Snover"));
+    .where(eq(pokemonSpeciesTable.name, "Snover"));
 
-  const abomasnow = await db.select().from(PokemonpeciesTable).where(eq(PokemonpeciesTable.name, "Abomasnow")).then(res => res[0]);
+  const abomasnow = await db.select().from(pokemonSpeciesTable).where(eq(pokemonSpeciesTable.name, "Abomasnow")).then(res => res[0]);
   if (abomasnow) {
       console.log("Updated Abomasnow ID logic...");
   }

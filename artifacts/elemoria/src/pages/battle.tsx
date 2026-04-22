@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGetBattle, usePerformBattleAction, getGetBattleQueryKey } from "@workspace/api-client-react";
 import { useGameStore } from "@/hooks/use-game-store";
-import { Pokemonprite } from "@/components/Pokemon-sprite";
+import { PokemonSprite } from "@/components/pokemon-sprite";
 import { getTypeBgClass } from "@/lib/type-colors";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 export default function Battle() {
   const activeBattleId = useGameStore((s) => s.activeBattleId);
   const [, setLocation] = useLocation();
-  const { data: battle, refetch } = useGetBattle(activeBattleId ?? 0, {
+  const { data: battleResponse, refetch } = useGetBattle(activeBattleId ?? 0, {
     query: { 
       queryKey: getGetBattleQueryKey(activeBattleId ?? 0),
       enabled: !!activeBattleId, 
       refetchInterval: false 
     },
   });
+  const battle = battleResponse?.data;
   const actionMutation = usePerformBattleAction();
   const [showPartyView, setShowPartyView] = useState(false);
 
@@ -127,7 +128,7 @@ export default function Battle() {
             </div>
           </div>
           <div className="w-24 h-24" style={{ transform: "scaleX(-1)" }}>
-            <Pokemonprite
+            <PokemonSprite
               speciesName={battle.opponentPokemon.name}
               type={battle.opponentPokemon.type1}
               spriteUrl={battle.opponentPokemon.spriteUrl}
@@ -138,7 +139,7 @@ export default function Battle() {
         {/* Player (bottom-left) */}
         <div className="absolute bottom-4 left-8 flex flex-col items-start gap-2">
           <div className="w-24 h-24">
-            <Pokemonprite
+            <PokemonSprite
               speciesName={battle.playerPokemon.name}
               type={battle.playerPokemon.type1}
               spriteUrl={battle.playerPokemon.backSpriteUrl ?? battle.playerPokemon.spriteUrl}
@@ -311,7 +312,7 @@ function PartySelect({ party, onSelect, disabled }: { party: any[], onSelect: (i
             onClick={() => onSelect(p.playerPokemonId)}
           >
             <div className="w-12 h-12 flex-shrink-0">
-               <Pokemonprite speciesName={p.name} type={p.type1} spriteUrl={p.spriteUrl} />
+               <PokemonSprite speciesName={p.name} type={p.type1} spriteUrl={p.spriteUrl} />
             </div>
             <div className="flex-1 text-left">
               <div className="font-bold">{p.name} <span className="text-xs text-muted-foreground font-normal overflow-hidden text-ellipsis ml-1">Lv.{p.level}</span></div>

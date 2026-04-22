@@ -1,7 +1,7 @@
 import { db } from "@workspace/db";
 import {
   movesTable,
-  PokemonpeciesTable,
+  pokemonSpeciesTable,
   regionsTable,
 } from "@workspace/db";
 import { eq } from "drizzle-orm";
@@ -310,7 +310,7 @@ export async function seed() {
   // Insert moves
   console.log("Seeding moves...");
   const insertedMoves = await db.insert(movesTable).values(MOVES).returning();
-  const moveMap = new Map(insertedMoves.map((m) => [m.name, m.id]));
+  const moveMap = new Map(insertedMoves.map((m: any) => [m.name, m.id]));
 
   // Insert species
   console.log("Seeding species...");
@@ -348,8 +348,8 @@ export async function seed() {
     rarity: s.rarity,
   }));
 
-  const insertedSpecies = await db.insert(PokemonpeciesTable).values(speciesInserts).returning();
-  const speciesMap = new Map(insertedSpecies.map((s) => [s.name, s.id]));
+  const insertedSpecies = await db.insert(pokemonSpeciesTable).values(speciesInserts).returning();
+  const speciesMap = new Map(insertedSpecies.map((s: any) => [s.name, s.id]));
 
   // Update evolution links
   for (const link of evolutionLinks) {
@@ -357,9 +357,9 @@ export async function seed() {
     const baseId = speciesMap.get(link.evolvesFrom);
     if (evolvedId && baseId) {
       await db
-        .update(PokemonpeciesTable)
+        .update(pokemonSpeciesTable)
         .set({ evolvesIntoId: evolvedId })
-        .where(eq(PokemonpeciesTable.id, baseId));
+        .where(eq(pokemonSpeciesTable.id, baseId));
     }
   }
 
@@ -376,7 +376,7 @@ export async function seed() {
 
   const regionInserts = REGIONS.map((r) => ({
     ...r,
-    wildPokemonpeciesIds: (regionSpeciesMap[r.name] ?? []).map((name) => speciesMap.get(name) ?? 1),
+    wildPokemonSpeciesIds: (regionSpeciesMap[r.name] ?? []).map((name) => speciesMap.get(name) ?? 1),
   }));
 
   await db.insert(regionsTable).values(regionInserts);

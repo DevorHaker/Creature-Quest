@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { playersTable, playerPokemonTable, PokemonpeciesTable } from "@workspace/db";
+import { playersTable, playerPokemonsTable, pokemonSpeciesTable } from "@workspace/db";
 import { eq, count, sum } from "drizzle-orm";
 import { CreatePlayerBody, UpdatePlayerProgressBody } from "@workspace/api-zod";
 import { getRequestPlayer } from "../lib/player-context";
@@ -55,8 +55,8 @@ router.post("/player", async (req, res) => {
   // Create and assign the starter Pokemon
   const [starterSpecies] = await db
     .select()
-    .from(PokemonpeciesTable)
-    .where(eq(PokemonpeciesTable.id, body.starterPokemonpeciesId));
+    .from(pokemonSpeciesTable)
+    .where(eq(pokemonSpeciesTable.id, body.starterPokemonSpeciesId));
 
   if (starterSpecies) {
     function calcHp(base: number, lvl: number) {
@@ -66,7 +66,7 @@ router.post("/player", async (req, res) => {
       return Math.floor((2 * base * lvl) / 100) + lvl + 5;
     }
     const lvl = 5;
-    await db.insert(playerPokemonTable).values({
+    await db.insert(playerPokemonsTable).values({
       playerId: player.id,
       speciesId: starterSpecies.id,
       nickname: null,

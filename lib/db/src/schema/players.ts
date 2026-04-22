@@ -12,7 +12,7 @@ export const playersTable = pgTable("players", {
   currentRegionId: integer("current_region_id").notNull().default(1),
   totalBattles: integer("total_battles").notNull().default(0),
   battlesWon: integer("battles_won").notNull().default(0),
-  totalPokemonsCaptured: integer("total_pokemons_captured").notNull().default(0),
+  totalPokemonCaptured: integer("total_pokemon_captured").notNull().default(0),
   badges: jsonb("badges").$type<string[]>().notNull().default([]),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

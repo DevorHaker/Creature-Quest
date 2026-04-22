@@ -112,11 +112,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Pokemonpecies"
+                  $ref: "#/components/schemas/PokemonSpecies"
 
   /Pokemon/{id}:
     get:
-      operationId: getPokemonpecies
+      operationId: getPokemonSpecies
       tags: [Pokemon]
       summary: Get a specific Pokemon species
       parameters:
@@ -131,11 +131,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pokemonpecies"
+                $ref: "#/components/schemas/PokemonSpecies"
 
   /player/Pokemon:
     get:
-      operationId: getPlayerPokemon
+      operationId: listPlayerPokemon
       tags: [Pokemon]
       summary: Get all Pokemon owned by the player
       responses:
@@ -478,12 +478,12 @@ components:
           type: string
         avatarColor:
           type: string
-        starterPokemonpeciesId:
+        starterPokemonSpeciesId:
           type: integer
       required:
         - name
         - avatarColor
-        - starterPokemonpeciesId
+        - starterPokemonSpeciesId
 
     UpdatePlayerProgressBody:
       type: object
@@ -528,7 +528,7 @@ components:
         - topPlayerName
         - topPlayerLevel
 
-    Pokemonpecies:
+    PokemonSpecies:
       type: object
       properties:
         id:
@@ -664,7 +664,7 @@ components:
           type: string
           nullable: true
         species:
-          $ref: "#/components/schemas/Pokemonpecies"
+          $ref: "#/components/schemas/PokemonSpecies"
         capturedAt:
           type: string
       required:
@@ -910,7 +910,7 @@ components:
         speciesId:
           type: integer
         species:
-          $ref: "#/components/schemas/Pokemonpecies"
+          $ref: "#/components/schemas/PokemonSpecies"
         minLevel:
           type: integer
         maxLevel:

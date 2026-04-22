@@ -347,7 +347,7 @@ router.post("/battle/:battleId/action", async (req, res) => {
         await db
           .update(playersTable)
           .set({
-            totalPokemonsCaptured: player.totalPokemonsCaptured + 1,
+            totalPokemonCaptured: player.totalPokemonCaptured + 1,
             currency: player.currency + (currencyGained ?? 0),
             experience: player.experience + (expGained ?? 0),
           })

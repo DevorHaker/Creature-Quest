@@ -1,5 +1,5 @@
 import { db } from "@workspace/db";
-import { PokemonpeciesTable, regionsTable } from "@workspace/db";
+import { pokemonSpeciesTable, regionsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
 const nameMapping: Record<string, string> = {
@@ -78,18 +78,18 @@ const typeUpdates: Record<string, { type1: string, type2: string | null }> = {
 async function migrateNames() {
   console.log("Starting name migration...");
 
-  const species = await db.select().from(PokemonpeciesTable);
+  const species = await db.select().from(pokemonSpeciesTable);
   for (const s of species) {
     let newName = nameMapping[s.name];
     if (newName && newName !== s.name) {
       let typesToUpdate = typeUpdates[s.name] || {};
       
-      await db.update(PokemonpeciesTable).set({ 
+      await db.update(pokemonSpeciesTable).set({ 
         name: newName, 
         spriteUrl: `/api/sprites/${newName.toLowerCase().replace(' ', '-')}`,
         backSpriteUrl: `/api/sprites/${newName.toLowerCase().replace(' ', '-')}-back`,
         ...typesToUpdate
-      }).where(eq(PokemonpeciesTable.id, s.id));
+      }).where(eq(pokemonSpeciesTable.id, s.id));
       console.log(`Updated Species ${s.name} -> ${newName}`);
     }
   }

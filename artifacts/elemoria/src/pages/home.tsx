@@ -15,7 +15,8 @@ export default function Home() {
   const playerId = useGameStore((s) => s.playerId);
   const setPlayerId = useGameStore((s) => s.setPlayerId);
   const queryClient = useQueryClient();
-  const { data: allPokemon } = useListPokemon();
+  const { data: allPokemonResponse } = useListPokemon();
+  const allPokemon = allPokemonResponse?.data;
   const createPlayer = useCreatePlayer();
 
   const [name, setName] = useState("");
@@ -83,12 +84,12 @@ export default function Home() {
         data: {
           name: name.trim(),
           avatarColor,
-          starterPokemonpeciesId: starterPokemonId,
+          starterPokemonSpeciesId: starterPokemonId,
         },
       },
       {
-        onSuccess: async (player) => {
-          setPlayerId(player.id);
+        onSuccess: async (resp) => {
+          setPlayerId(resp.data.id);
           await queryClient.invalidateQueries({ queryKey: getGetPlayerQueryKey() });
           setLocation("/hub");
         },
