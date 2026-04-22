@@ -1,0 +1,1006 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Elemoria Rise of the Pokemon API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: game
+    description: Game state and player operations
+  - name: Pokemon
+    description: Pokemon creature operations
+  - name: battle
+    description: Battle system operations
+  - name: world
+    description: World exploration and map operations
+  - name: inventory
+    description: Player inventory operations
+  - name: leaderboard
+    description: Leaderboard operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /game/player:
+    get:
+      operationId: getPlayer
+      tags: [game]
+      summary: Get player data
+      responses:
+        "200":
+          description: Player data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Player"
+    post:
+      operationId: createPlayer
+      tags: [game]
+      summary: Create a new player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlayerBody"
+      responses:
+        "201":
+          description: Player created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Player"
+
+  /game/player/progress:
+    patch:
+      operationId: updatePlayerProgress
+      tags: [game]
+      summary: Update player progress
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePlayerProgressBody"
+      responses:
+        "200":
+          description: Updated player
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Player"
+
+  /game/summary:
+    get:
+      operationId: getGameSummary
+      tags: [game]
+      summary: Get overall game summary stats
+      responses:
+        "200":
+          description: Game summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameSummary"
+
+  /Pokemon:
+    get:
+      operationId: listPokemon
+      tags: [Pokemon]
+      summary: List all Pokemon species in the Pokedex
+      responses:
+        "200":
+          description: List of Pokemon species
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pokemonpecies"
+
+  /Pokemon/{id}:
+    get:
+      operationId: getPokemonpecies
+      tags: [Pokemon]
+      summary: Get a specific Pokemon species
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pokemon species detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pokemonpecies"
+
+  /player/Pokemon:
+    get:
+      operationId: getPlayerPokemon
+      tags: [Pokemon]
+      summary: Get all Pokemon owned by the player
+      responses:
+        "200":
+          description: Player's Pokemon
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerPokemon"
+    post:
+      operationId: capturePokemon
+      tags: [Pokemon]
+      summary: Capture a wild Pokemon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CapturePokemonBody"
+      responses:
+        "201":
+          description: Pokemon captured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerPokemon"
+
+  /player/Pokemon/{id}:
+    get:
+      operationId: getPlayerPokemon
+      tags: [Pokemon]
+      summary: Get a specific player Pokemon
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Player Pokemon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerPokemon"
+    patch:
+      operationId: updatePlayerPokemon
+      tags: [Pokemon]
+      summary: Update a player Pokemon (rename, evolve, etc)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePlayerPokemonBody"
+      responses:
+        "200":
+          description: Updated player Pokemon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerPokemon"
+
+  /player/party:
+    get:
+      operationId: getPlayerParty
+      tags: [Pokemon]
+      summary: Get the player's active battle party (up to 3)
+      responses:
+        "200":
+          description: Player party
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerPokemon"
+    post:
+      operationId: setPlayerParty
+      tags: [Pokemon]
+      summary: Set the player's battle party
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetPartyBody"
+      responses:
+        "200":
+          description: Updated party
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerPokemon"
+
+  /player/heal:
+    post:
+      operationId: healParty
+      tags: [Pokemon]
+      summary: Heal all player Pokemon to full HP and clear status conditions
+      responses:
+        "200":
+          description: Pokemon healed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+
+  /battle/start:
+    post:
+      operationId: startBattle
+      tags: [battle]
+      summary: Start a new battle (wild or trainer)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartBattleBody"
+      responses:
+        "201":
+          description: Battle started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BattleState"
+
+  /battle/{battleId}/action:
+    post:
+      operationId: performBattleAction
+      tags: [battle]
+      summary: Perform an action in battle (attack, use item, flee, switch)
+      parameters:
+        - name: battleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BattleActionBody"
+      responses:
+        "200":
+          description: Battle state after action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BattleState"
+
+  /battle/{battleId}:
+    get:
+      operationId: getBattle
+      tags: [battle]
+      summary: Get current battle state
+      parameters:
+        - name: battleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Battle state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BattleState"
+
+  /battle/history:
+    get:
+      operationId: getBattleHistory
+      tags: [battle]
+      summary: Get player's recent battle history
+      responses:
+        "200":
+          description: Battle history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BattleRecord"
+
+  /world/regions:
+    get:
+      operationId: listRegions
+      tags: [world]
+      summary: List all explorable regions
+      responses:
+        "200":
+          description: List of regions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Region"
+
+  /world/regions/{id}/wild-Pokemon:
+    get:
+      operationId: getRegionWildPokemon
+      tags: [world]
+      summary: Get wild Pokemon available in a region
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Wild Pokemon in region
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WildPokemonEncounter"
+
+  /inventory:
+    get:
+      operationId: getInventory
+      tags: [inventory]
+      summary: Get player's inventory
+      responses:
+        "200":
+          description: Player inventory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inventory"
+    post:
+      operationId: addInventoryItem
+      tags: [inventory]
+      summary: Add item to inventory (from shop purchase or reward)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddInventoryItemBody"
+      responses:
+        "201":
+          description: Item added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get top players leaderboard
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        avatarColor:
+          type: string
+        level:
+          type: integer
+        experience:
+          type: integer
+        currency:
+          type: integer
+        currentRegionId:
+          type: integer
+        totalBattles:
+          type: integer
+        battlesWon:
+          type: integer
+        totalPokemonCaptured:
+          type: integer
+        badges:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - avatarColor
+        - level
+        - experience
+        - currency
+        - currentRegionId
+        - totalBattles
+        - battlesWon
+        - totalPokemonCaptured
+        - badges
+        - createdAt
+
+    CreatePlayerBody:
+      type: object
+      properties:
+        name:
+          type: string
+        avatarColor:
+          type: string
+        starterPokemonpeciesId:
+          type: integer
+      required:
+        - name
+        - avatarColor
+        - starterPokemonpeciesId
+
+    UpdatePlayerProgressBody:
+      type: object
+      properties:
+        experience:
+          type: integer
+        currency:
+          type: integer
+        currentRegionId:
+          type: integer
+        totalBattles:
+          type: integer
+        battlesWon:
+          type: integer
+        totalPokemonCaptured:
+          type: integer
+        badges:
+          type: array
+          items:
+            type: string
+
+    GameSummary:
+      type: object
+      properties:
+        totalPlayers:
+          type: integer
+        totalPokemonCaptured:
+          type: integer
+        totalBattlesFought:
+          type: integer
+        totalSpeciesDiscovered:
+          type: integer
+        topPlayerName:
+          type: string
+        topPlayerLevel:
+          type: integer
+      required:
+        - totalPlayers
+        - totalPokemonCaptured
+        - totalBattlesFought
+        - totalSpeciesDiscovered
+        - topPlayerName
+        - topPlayerLevel
+
+    Pokemonpecies:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        type1:
+          type: string
+        type2:
+          type: string
+          nullable: true
+        baseHp:
+          type: integer
+        baseAttack:
+          type: integer
+        baseDefense:
+          type: integer
+        baseSpeed:
+          type: integer
+        baseSpecialAttack:
+          type: integer
+        baseSpecialDefense:
+          type: integer
+        evolutionLevel:
+          type: integer
+          nullable: true
+        evolvesIntoId:
+          type: integer
+          nullable: true
+        catchRate:
+          type: integer
+        spriteUrl:
+          type: string
+        backSpriteUrl:
+          type: string
+        moves:
+          type: array
+          items:
+            $ref: "#/components/schemas/Move"
+        rarity:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - type1
+        - baseHp
+        - baseAttack
+        - baseDefense
+        - baseSpeed
+        - baseSpecialAttack
+        - baseSpecialDefense
+        - catchRate
+        - spriteUrl
+        - backSpriteUrl
+        - moves
+        - rarity
+
+    Move:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        power:
+          type: integer
+        accuracy:
+          type: integer
+        pp:
+          type: integer
+        category:
+          type: string
+        description:
+          type: string
+        effect:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+        - type
+        - power
+        - accuracy
+        - pp
+        - category
+        - description
+
+    PlayerPokemon:
+      type: object
+      properties:
+        id:
+          type: integer
+        playerId:
+          type: integer
+        speciesId:
+          type: integer
+        nickname:
+          type: string
+          nullable: true
+        level:
+          type: integer
+        experience:
+          type: integer
+        currentHp:
+          type: integer
+        maxHp:
+          type: integer
+        attack:
+          type: integer
+        defense:
+          type: integer
+        speed:
+          type: integer
+        specialAttack:
+          type: integer
+        specialDefense:
+          type: integer
+        moves:
+          type: array
+          items:
+            $ref: "#/components/schemas/Move"
+        isInParty:
+          type: boolean
+        partySlot:
+          type: integer
+          nullable: true
+        statusCondition:
+          type: string
+          nullable: true
+        species:
+          $ref: "#/components/schemas/Pokemonpecies"
+        capturedAt:
+          type: string
+      required:
+        - id
+        - playerId
+        - speciesId
+        - level
+        - experience
+        - currentHp
+        - maxHp
+        - attack
+        - defense
+        - speed
+        - specialAttack
+        - specialDefense
+        - moves
+        - isInParty
+        - species
+        - capturedAt
+
+    CapturePokemonBody:
+      type: object
+      properties:
+        speciesId:
+          type: integer
+        level:
+          type: integer
+        nickname:
+          type: string
+      required:
+        - speciesId
+        - level
+
+    UpdatePlayerPokemonBody:
+      type: object
+      properties:
+        nickname:
+          type: string
+        currentHp:
+          type: integer
+        experience:
+          type: integer
+        level:
+          type: integer
+        statusCondition:
+          type: string
+          nullable: true
+        evolveToSpeciesId:
+          type: integer
+
+    SetPartyBody:
+      type: object
+      properties:
+        PokemonIds:
+          type: array
+          items:
+            type: integer
+          maxItems: 6
+      required:
+        - PokemonIds
+
+    BattleState:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        status:
+          type: string
+        turn:
+          type: integer
+        playerPokemon:
+          $ref: "#/components/schemas/BattlePokemon"
+        opponentPokemon:
+          $ref: "#/components/schemas/BattlePokemon"
+        playerParty:
+          type: array
+          items:
+            $ref: "#/components/schemas/BattlePokemon"
+        requiresSwitch:
+          type: boolean
+        log:
+          type: array
+          items:
+            type: string
+        canCapture:
+          type: boolean
+        result:
+          type: string
+          nullable: true
+        expGained:
+          type: integer
+          nullable: true
+        currencyGained:
+          type: integer
+          nullable: true
+      required:
+        - id
+        - type
+        - status
+        - turn
+        - playerPokemon
+        - opponentPokemon
+        - playerParty
+        - requiresSwitch
+        - log
+        - canCapture
+
+    BattlePokemon:
+      type: object
+      properties:
+        playerPokemonId:
+          type: integer
+          nullable: true
+        speciesId:
+          type: integer
+        name:
+          type: string
+        level:
+          type: integer
+        currentHp:
+          type: integer
+        maxHp:
+          type: integer
+        moves:
+          type: array
+          items:
+            $ref: "#/components/schemas/Move"
+        statusCondition:
+          type: string
+          nullable: true
+        spriteUrl:
+          type: string
+        backSpriteUrl:
+          type: string
+        type1:
+          type: string
+        type2:
+          type: string
+          nullable: true
+      required:
+        - speciesId
+        - name
+        - level
+        - currentHp
+        - maxHp
+        - moves
+        - spriteUrl
+        - backSpriteUrl
+        - type1
+
+    StartBattleBody:
+      type: object
+      properties:
+        battleType:
+          type: string
+          enum: [wild, trainer]
+        regionId:
+          type: integer
+        trainerLevel:
+          type: integer
+      required:
+        - battleType
+        - regionId
+
+    BattleActionBody:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [attack, item, flee, capture, switch]
+        moveId:
+          type: integer
+        itemId:
+          type: integer
+        switchToPokemonId:
+          type: integer
+      required:
+        - action
+
+    BattleRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        result:
+          type: string
+        opponentName:
+          type: string
+        expGained:
+          type: integer
+        currencyGained:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - type
+        - result
+        - opponentName
+        - expGained
+        - currencyGained
+        - createdAt
+
+    Region:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        minLevel:
+          type: integer
+        maxLevel:
+          type: integer
+        biome:
+          type: string
+        isUnlocked:
+          type: boolean
+        unlockRequirement:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - minLevel
+        - maxLevel
+        - biome
+        - isUnlocked
+        - imageUrl
+
+    WildPokemonEncounter:
+      type: object
+      properties:
+        speciesId:
+          type: integer
+        species:
+          $ref: "#/components/schemas/Pokemonpecies"
+        minLevel:
+          type: integer
+        maxLevel:
+          type: integer
+        encounterRate:
+          type: number
+      required:
+        - speciesId
+        - species
+        - minLevel
+        - maxLevel
+        - encounterRate
+
+    Inventory:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/InventoryItem"
+        totalSlots:
+          type: integer
+        usedSlots:
+          type: integer
+      required:
+        - items
+        - totalSlots
+        - usedSlots
+
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        itemType:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: integer
+        effect:
+          type: string
+        imageUrl:
+          type: string
+      required:
+        - id
+        - itemType
+        - name
+        - description
+        - quantity
+        - effect
+        - imageUrl
+
+    AddInventoryItemBody:
+      type: object
+      properties:
+        itemType:
+          type: string
+        name:
+          type: string
+        quantity:
+          type: integer
+      required:
+        - itemType
+        - name
+        - quantity
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        playerName:
+          type: string
+        level:
+          type: integer
+        battlesWon:
+          type: integer
+        totalPokemonCaptured:
+          type: integer
+        badges:
+          type: array
+          items:
+            type: string
+      required:
+        - rank
+        - playerName
+        - level
+        - battlesWon
+        - totalPokemonCaptured
+        - badges
