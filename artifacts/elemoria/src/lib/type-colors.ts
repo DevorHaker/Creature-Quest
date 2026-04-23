@@ -3,7 +3,8 @@ export function getTypeColor(type: string): string {
     case "normal": return "#9ca3af";
     case "fire": return "#f97316";
     case "water": return "#3b82f6";
-    case "grass": return "#22c55e";
+    case "grass":
+    case "nature": return "#22c55e";
     case "electric": return "#facc15";
     case "ice": return "#22d3ee";
     case "fighting": return "#ef4444";
@@ -27,7 +28,8 @@ export function getTypeBgClass(type: string): string {
     case "normal": return "bg-gray-400/20 text-gray-400 border-gray-400/30";
     case "fire": return "bg-orange-500/20 text-orange-400 border-orange-500/30";
     case "water": return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-    case "grass": return "bg-green-500/20 text-green-400 border-green-500/30";
+    case "grass":
+    case "nature": return "bg-green-500/20 text-green-400 border-green-500/30";
     case "electric": return "bg-yellow-400/20 text-yellow-400 border-yellow-400/30";
     case "ice": return "bg-cyan-400/20 text-cyan-400 border-cyan-400/30";
     case "fighting": return "bg-red-500/20 text-red-500 border-red-500/30";
