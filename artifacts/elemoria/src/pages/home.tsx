@@ -95,7 +95,16 @@ export default function Home() {
         },
         onError: (error: any) => {
           console.error("Creation failed:", error);
-          const message = error?.response?.data?.error || "Failed to start adventure. Please check your connection and try again.";
+          let message = "Failed to start adventure. Please check your connection and try again.";
+          
+          if (error?.data?.error) {
+            message = error.data.error;
+          } else if (error?.status) {
+            message = `Server Error (${error.status}): ${error.statusText || "Unknown Error"}. This usually means the database is unreachable or misconfigured.`;
+          } else if (error?.message) {
+            message = `Network Error: ${error.message}. Please check your internet connection.`;
+          }
+          
           alert(message);
         }
       }

@@ -91,9 +91,14 @@ function calcHp(baseHp: number, level: number) {
 
 // List all species (Pokedex)
 router.get("/Pokemon", async (_req, res) => {
-  const species = await db.select().from(pokemonSpeciesTable);
-  const result = await Promise.all(species.map(formatSpecies));
-  res.json(result);
+  try {
+    const species = await db.select().from(pokemonSpeciesTable);
+    const result = await Promise.all(species.map(formatSpecies));
+    res.json(result);
+  } catch (error: any) {
+    console.error("Failed to list Pokemon:", error);
+    res.status(500).json({ error: error?.message || "Failed to load Pokédex" });
+  }
 });
 
 // Get a specific species

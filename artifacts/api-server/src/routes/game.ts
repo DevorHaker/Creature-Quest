@@ -34,44 +34,44 @@ router.get("/player", async (req, res) => {
 });
 
 router.post("/player", async (req, res) => {
-  const body = CreatePlayerBody.parse(req.body);
-
-  const [player] = await db
-    .insert(playersTable)
-    .values({
-      name: body.name,
-      avatarColor: body.avatarColor,
-      level: 1,
-      experience: 0,
-      currency: 500,
-      currentRegionId: 1,
-      totalBattles: 0,
-      battlesWon: 0,
-      totalPokemonCaptured: 0,
-      badges: [],
-    })
-    .returning();
-
-  // Create and assign the starter Pokemon
-  const [starterSpecies] = await db
-    .select()
-    .from(pokemonSpeciesTable)
-    .where(eq(pokemonSpeciesTable.id, body.starterPokemonSpeciesId));
-
-  if (!starterSpecies) {
-    console.error(`Starter species not found for ID: ${body.starterPokemonSpeciesId}`);
-    res.status(400).json({ error: "Invalid starter Pokémon selected" });
-    return;
-  }
-
-  function calcHp(base: number, lvl: number) {
-    return Math.floor((2 * base * lvl) / 100) + lvl + 10;
-  }
-  function calcStat(base: number, lvl: number) {
-    return Math.floor((2 * base * lvl) / 100) + lvl + 5;
-  }
-
   try {
+    const body = CreatePlayerBody.parse(req.body);
+
+    const [player] = await db
+      .insert(playersTable)
+      .values({
+        name: body.name,
+        avatarColor: body.avatarColor,
+        level: 1,
+        experience: 0,
+        currency: 500,
+        currentRegionId: 1,
+        totalBattles: 0,
+        battlesWon: 0,
+        totalPokemonCaptured: 0,
+        badges: [],
+      })
+      .returning();
+
+    // Create and assign the starter Pokemon
+    const [starterSpecies] = await db
+      .select()
+      .from(pokemonSpeciesTable)
+      .where(eq(pokemonSpeciesTable.id, body.starterPokemonSpeciesId));
+
+    if (!starterSpecies) {
+      console.error(`Starter species not found for ID: ${body.starterPokemonSpeciesId}`);
+      res.status(400).json({ error: "Invalid starter Pokémon selected" });
+      return;
+    }
+
+    function calcHp(base: number, lvl: number) {
+      return Math.floor((2 * base * lvl) / 100) + lvl + 10;
+    }
+    function calcStat(base: number, lvl: number) {
+      return Math.floor((2 * base * lvl) / 100) + lvl + 5;
+    }
+
     const lvl = 5;
     const moves = Array.isArray(starterSpecies.moveIds) ? starterSpecies.moveIds.slice(0, 4) : [];
     
@@ -94,9 +94,10 @@ router.post("/player", async (req, res) => {
     });
 
     res.status(201).json(formatPlayer(player));
-  } catch (error) {
-    console.error("Failed to create starter Pokemon:", error);
-    res.status(500).json({ error: "Failed to initialize your adventure. Please try again." });
+  } catch (error: any) {
+    console.error("Failed to initialize adventure:", error);
+    const message = error?.message || "Failed to initialize your adventure. Please try again.";
+    res.status(error?.status || 500).json({ error: message });
   }
 });
 

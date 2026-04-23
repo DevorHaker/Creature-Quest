@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { seed } from "./seed";
 
 const app: Express = express();
 
@@ -38,5 +39,8 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   const message = err?.message ?? "Internal server error";
   res.status(status).json({ error: message });
 });
+
+// Run seed in the background to ensure database is populated
+seed().catch((err) => logger.error(err, "Seed failed during app initialization"));
 
 export default app;

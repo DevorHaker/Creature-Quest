@@ -23,11 +23,4 @@ app.listen(port, async (err) => {
   }
 
   logger.info({ port }, "Server listening");
-
-  try {
-    await seed();
-    logger.info("Seed completed");
-  } catch (e) {
-    logger.error({ err: e }, "Seed failed");
-  }
 });
