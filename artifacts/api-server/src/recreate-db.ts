@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 
 async function run() {
   console.log("Dropping old tables...");
-  const oldTables = ["inventory_items", "battles", "player_Pokemon", "player_pokemon", "moves", "Pokemon_species", "pokemon_species", "regions", "players"];
+  const oldTables = ["inventory_items", "battles", "player_pokemons", "player_Pokemon", "player_pokemon", "moves", "Pokemon_species", "pokemon_species", "regions", "players"];
   
   for (const table of oldTables) {
     try {
@@ -71,7 +71,7 @@ async function run() {
   `));
 
   await db.execute(sql.raw(`
-    CREATE TABLE "player_pokemon" (
+    CREATE TABLE "player_pokemons" (
       "id" serial PRIMARY KEY NOT NULL,
       "player_id" integer NOT NULL,
       "species_id" integer NOT NULL,
