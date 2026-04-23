@@ -102,6 +102,8 @@ async function run() {
       "turn" integer DEFAULT 1 NOT NULL,
       "player_pokemon_data" jsonb NOT NULL,
       "opponent_pokemon_data" jsonb NOT NULL,
+      "player_party_data" jsonb DEFAULT '[]'::jsonb NOT NULL,
+      "requires_switch" boolean DEFAULT false NOT NULL,
       "log" jsonb DEFAULT '[]'::jsonb NOT NULL,
       "can_capture" boolean DEFAULT false NOT NULL,
       "result" text,
